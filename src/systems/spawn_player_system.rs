@@ -1,6 +1,9 @@
 use crate::entities::player_entity::PlayerEntityBundle;
 use bevy::camera::ScalingMode;
 use bevy::prelude::*;
+use bevy_prng::WyRand;
+use bevy_rand::global::GlobalRng;
+use rand_core::Rng;
 use crate::components::stats_component::StatsComponent;
 use crate::enums::map_layer_enum::MapLayerEnum::MapLayerPlayers;
 use crate::enums::tile_sprite_enum::TileSpriteEnum::PlayerIdle;
@@ -11,6 +14,7 @@ pub fn spawn_player_system(
     asset_server: Res<AssetServer>,
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
     mut turn_order: ResMut<TurnOrderResource>,
+    mut rng: Single<&mut WyRand, With<GlobalRng>>
 ) {
     let texture = asset_server.load("monochrome_tilemap.png");
     let layout =
@@ -26,7 +30,7 @@ pub fn spawn_player_system(
     ));
 
     let stats = StatsComponent::default();
-    let initiative = stats.roll_initiative();
+    let initiative = stats.roll_initiative(rng.next_u32());
     let entity = commands.spawn(
         (PlayerEntityBundle {
             transform: Transform {

@@ -1,5 +1,8 @@
 use crate::entities::character_entity::CharacterEntityBundle;
 use bevy::prelude::*;
+use bevy_prng::WyRand;
+use bevy_rand::global::GlobalRng;
+use rand_core::Rng;
 use crate::components::map_position_component::MapPositionComponent;
 use crate::components::stats_component::StatsComponent;
 use crate::enums::map_layer_enum::MapLayerEnum::MapLayerCharacters;
@@ -11,7 +14,7 @@ pub fn spawn_character_system(
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
     mut turn_order: ResMut<TurnOrderResource>,
     asset_server: Res<AssetServer>,
-
+    mut rng: Single<&mut WyRand, With<GlobalRng>>
 ) {
 
     for i in 1..10 {
@@ -20,8 +23,12 @@ pub fn spawn_character_system(
             TextureAtlasLayout::from_grid(UVec2::splat(8), 16, 10, Some(UVec2::splat(1)), None);
         let texture_atlas_layout = texture_atlas_layouts.add(layout);
         let stats = StatsComponent::default();
-        let map_position = MapPositionComponent::new(i, i);
-        let initiative = stats.roll_initiative() - 1;
+
+        let rand_x = (rng.next_u32() % 20) as i32 - 10;
+        let rand_y = (rng.next_u32() % 20) as i32 - 10;
+
+        let map_position = MapPositionComponent::new(rand_x, rand_y);
+        let initiative = stats.roll_initiative(rng.next_u32());
         let entity = commands.spawn(
             (CharacterEntityBundle {
                 transform: Transform {

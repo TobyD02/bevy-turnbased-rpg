@@ -11,7 +11,7 @@ pub fn character_movement_system(
     player_query: Query<&MapPositionComponent, With<PlayerComponent>>,
     keys: Res<ButtonInput<KeyCode>>
 ) {
-    if !keys.just_pressed(AllowCharacterTurn.keycode()) {
+    if !keys.pressed(AllowCharacterTurn.keycode()) {
         return;
     }
 

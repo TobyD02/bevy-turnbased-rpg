@@ -50,4 +50,8 @@ impl TurnOrderResource {
         }
         self.active_entity = (self.active_entity + 1) % len;
     }
+
+    pub fn sort(&mut self) {
+        &self.entities.sort_by(|(a, _), (b, _)| b.cmp(a));
+    }
 }
