@@ -1,12 +1,16 @@
-use crate::entities::character_entity::CharacterEntityBundle;
-use crate::enums::tile_sprite_enum::TileSpriteEnum;
+use crate::entities::player_entity::PlayerEntityBundle;
 use bevy::camera::ScalingMode;
 use bevy::prelude::*;
+use crate::components::stats_component::StatsComponent;
+use crate::enums::map_layer_enum::MapLayerEnum::MapLayerPlayers;
+use crate::enums::tile_sprite_enum::TileSpriteEnum::PlayerIdle;
+use crate::resources::turn_order_resource::TurnOrderResource;
 
-pub fn setup_spawn_character_system(
+pub fn spawn_player_system(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
+    mut turn_order: ResMut<TurnOrderResource>,
 ) {
     let texture = asset_server.load("monochrome_tilemap.png");
     let layout =
@@ -21,19 +25,23 @@ pub fn setup_spawn_character_system(
         }),
     ));
 
-    commands.spawn(
-        (CharacterEntityBundle {
-            transform: Transform::default(),
+    let stats = StatsComponent::default();
+    let initiative = stats.roll_initiative();
+    let entity = commands.spawn(
+        (PlayerEntityBundle {
+            transform: Transform {
+                translation: Vec3::splat(MapLayerPlayers.float()),
+                ..Default::default()
+            },
             sprite: Sprite::from_atlas_image(
                 texture,
                 TextureAtlas {
                     layout: texture_atlas_layout,
-                    index: TileSpriteEnum::PlayerIdle.usize(),
+                    index: PlayerIdle.usize(),
                 },
             ),
-            stats: Default::default(),
-            health: Default::default(),
-            map_position: Default::default(),
+            ..Default::default()
         }),
-    );
+    ).id();
+    turn_order.add_entity(initiative, entity)
 }

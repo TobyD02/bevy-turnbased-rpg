@@ -22,3 +22,9 @@ impl Default for StatsComponent {
         }
     }
 }
+
+impl StatsComponent {
+    pub fn roll_initiative(&self) -> i32 {
+        self.dex as i32
+    }
+}

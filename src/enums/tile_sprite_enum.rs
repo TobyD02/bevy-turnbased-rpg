@@ -7,6 +7,7 @@ pub enum TileSpriteEnum {
     PlayerBlock = 5,
     PlayerAttack = 6,
     PlayerBuff = 7,
+    CharacterMinotaur = 15,
 }
 
 impl TileSpriteEnum {
