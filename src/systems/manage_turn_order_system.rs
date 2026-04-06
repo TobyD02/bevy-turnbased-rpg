@@ -13,13 +13,14 @@ pub fn manage_turn_order_system(
     }
 
     if turn_order.is_should_reorder() {
-        for (mut order_position, entity) in turn_order.get_entities_mut().iter_mut() {
+        for (order_position, entity) in turn_order.get_entities_mut().iter_mut() {
             if let Ok(stats) = query.get(*entity) {
-                order_position = &Reverse(stats.roll_initiative())
+                *order_position = stats.roll_initiative();
             }
         }
         turn_order.set_should_reorder(false);
         println!("New order: {:?}", turn_order.get_entities());
     }
 
+    println!("Active: {:?}, Turn order: {:?}",turn_order.get_active_entity(), turn_order.get_entities());
 }

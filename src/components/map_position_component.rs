@@ -14,6 +14,9 @@ impl Default for MapPositionComponent {
 }
 
 impl MapPositionComponent {
+    pub fn new(x: i32, y: i32) -> Self {
+        Self { x, y }
+    }
     pub fn update_transform(&self, transform: &mut Transform) {
         transform.translation.x = self.x as f32 * MAP_WIDTH as f32;
         transform.translation.y = self.y as f32 * MAP_WIDTH as f32;

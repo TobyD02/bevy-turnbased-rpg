@@ -5,6 +5,7 @@ pub enum ControlMappingEnum {
     PlayerMoveDown,
     PlayerMoveLeft,
     PlayerMoveRight,
+    AllowCharacterTurn,
 }
 
 impl ControlMappingEnum {
@@ -14,6 +15,7 @@ impl ControlMappingEnum {
             ControlMappingEnum::PlayerMoveDown => KeyCode::KeyS,
             ControlMappingEnum::PlayerMoveLeft => KeyCode::KeyA,
             ControlMappingEnum::PlayerMoveRight => KeyCode::KeyD,
+            ControlMappingEnum::AllowCharacterTurn => KeyCode::Space,
         }
     }
 }
