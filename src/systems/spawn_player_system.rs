@@ -20,14 +20,6 @@ pub fn spawn_player_system(
     let layout =
         TextureAtlasLayout::from_grid(UVec2::splat(8), 16, 10, Some(UVec2::splat(1)), None);
     let texture_atlas_layout = texture_atlas_layouts.add(layout);
-    commands.spawn((
-        Camera2d,
-        Projection::Orthographic(OrthographicProjection {
-            scaling_mode: ScalingMode::WindowSize,
-            scale: 0.2,
-            ..OrthographicProjection::default_2d()
-        }),
-    ));
 
     let stats = StatsComponent::default();
     let initiative = stats.roll_initiative(rng.next_u32());
