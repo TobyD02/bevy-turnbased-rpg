@@ -7,3 +7,6 @@ pub mod spawn_turn_order_system;
 pub mod manage_turn_order_system;
 pub mod spawn_camera_system;
 pub mod update_game_camera_system;
+pub mod spawn_game_log_system;
+pub mod draw_game_log_system;
+pub mod spawn_ui_camera_system;
