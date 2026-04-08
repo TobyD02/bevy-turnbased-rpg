@@ -46,7 +46,6 @@ impl StatsComponent {
     }
 
     pub fn roll_initiative(&self, next_rand_u32: u32) -> i32 {
-        println!("calc: {}, {}", self.get_dex_mod(), (next_rand_u32 % 20 ) as i32 + 1);
         self.get_dex_mod() + (next_rand_u32  % 20) as i32 + 1
     }
 }
