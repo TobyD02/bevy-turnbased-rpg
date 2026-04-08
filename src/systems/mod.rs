@@ -1,12 +1,3 @@
-pub mod spawn_character_system;
-pub mod map_translation_system;
-pub mod player_movement_system;
-pub mod spawn_player_system;
-pub mod character_movement_system;
-pub mod spawn_turn_order_system;
-pub mod manage_turn_order_system;
-pub mod spawn_camera_system;
-pub mod update_game_camera_system;
-pub mod spawn_game_log_system;
-pub mod draw_game_log_system;
-pub mod spawn_ui_camera_system;
+mod setup_systems;
+mod update_systems;
+pub mod _plugin;
