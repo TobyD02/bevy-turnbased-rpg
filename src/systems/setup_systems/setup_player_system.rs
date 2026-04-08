@@ -9,7 +9,7 @@ use crate::enums::map_layer_enum::MapLayerEnum::MapLayerPlayers;
 use crate::enums::tile_sprite_enum::TileSpriteEnum::PlayerIdle;
 use crate::resources::turn_order_resource::TurnOrderResource;
 
-pub fn spawn_player_system(
+pub fn setup_player_system(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,

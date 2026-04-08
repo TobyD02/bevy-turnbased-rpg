@@ -9,7 +9,7 @@ use crate::enums::map_layer_enum::MapLayerEnum::MapLayerCharacters;
 use crate::enums::tile_sprite_enum::TileSpriteEnum::CharacterMinotaur;
 use crate::resources::turn_order_resource::TurnOrderResource;
 
-pub fn spawn_character_system(
+pub fn setup_character_system(
     mut commands: Commands,
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
     mut turn_order: ResMut<TurnOrderResource>,

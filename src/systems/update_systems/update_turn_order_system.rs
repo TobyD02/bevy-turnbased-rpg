@@ -7,7 +7,7 @@ use crate::components::stats_component::StatsComponent;
 use crate::components::turn_taker_component::TurnTakerComponent;
 use crate::resources::turn_order_resource::TurnOrderResource;
 
-pub fn manage_turn_order_system(
+pub fn update_turn_order_system(
     mut turn_order: ResMut<TurnOrderResource>,
     query: Query< &StatsComponent, With<TurnTakerComponent>>,
     mut rng: Single<&mut WyRand, With<GlobalRng>>

@@ -6,7 +6,7 @@ use crate::enums::control_mapping_enum::ControlMappingEnum;
 use crate::resources::game_log_resource::GameLogResource;
 use crate::resources::turn_order_resource::TurnOrderResource;
 
-pub fn player_movement_system(
+pub fn update_player_movement_system(
     mut query: Query<(Entity, &mut MapPositionComponent), With<PlayerComponent>>,
     keys: Res<ButtonInput<KeyCode>>,
     mut turn_order: ResMut<TurnOrderResource>,

@@ -5,7 +5,7 @@ use crate::components::player_component::PlayerComponent;
 use crate::enums::control_mapping_enum::ControlMappingEnum::AllowCharacterTurn;
 use crate::resources::turn_order_resource::TurnOrderResource;
 
-pub fn character_movement_system(
+pub fn update_character_movement_system(
     mut query: Query<(Entity, &mut MapPositionComponent), (With<CharacterComponent>, Without<PlayerComponent>)>,
     mut turn_order: ResMut<TurnOrderResource>,
     player_query: Query<&MapPositionComponent, With<PlayerComponent>>,

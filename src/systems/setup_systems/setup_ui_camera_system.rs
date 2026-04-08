@@ -2,7 +2,7 @@ use bevy::camera::visibility::RenderLayers;
 use bevy::prelude::*;
 use crate::components::ui_camera_component::UiCameraComponent;
 
-pub fn spawn_ui_camera_system(
+pub fn setup_ui_camera_system(
     mut commands: Commands
 ) {
     commands.spawn((

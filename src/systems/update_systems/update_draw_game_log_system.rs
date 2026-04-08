@@ -2,7 +2,7 @@ use bevy::prelude::*;
 use crate::components::game_log_text_component::GameLogTextComponent;
 use crate::resources::game_log_resource::GameLogResource;
 
-pub fn draw_game_log_system(
+pub fn update_draw_game_log_system(
     mut log: ResMut<GameLogResource>,
     mut query: Query<&mut Text, With<GameLogTextComponent>>,
 ) {

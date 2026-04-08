@@ -5,7 +5,7 @@ use crate::components::game_log_text_component::GameLogTextComponent;
 use crate::components::ui_camera_component::UiCameraComponent;
 use crate::resources::game_log_resource::GameLogResource;
 
-pub fn spawn_game_log_system(
+pub fn setup_game_log_system(
     mut commands: Commands,
     mut asset_server: ResMut<AssetServer>,
     query: Query<Entity, With<UiCameraComponent>>

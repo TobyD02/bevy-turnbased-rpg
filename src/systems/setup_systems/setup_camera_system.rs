@@ -2,7 +2,7 @@ use bevy::camera::{ScalingMode, Viewport};
 use bevy::prelude::*;
 use crate::components::game_camera_component::GameCameraComponent;
 
-pub fn spawn_camera_system(
+pub fn setup_camera_system(
     mut commands: Commands,
 ) {
     commands.spawn((
