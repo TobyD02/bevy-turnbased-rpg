@@ -22,8 +22,12 @@ impl GameLogResource {
         &self.logs
     }
     pub fn get_logs_display_string(&self) -> String {
-        // Join all messages into one string
-        let display_logs = &self.logs[self.logs.len().saturating_sub(20)..];
-        display_logs.join("\n")
+        self.logs
+            .iter()
+            .rev()
+            .take(100)
+            .cloned()
+            .collect::<Vec<_>>()
+            .join("\n")
     }
 }
