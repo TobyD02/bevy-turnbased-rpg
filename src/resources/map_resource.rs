@@ -1,18 +1,13 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::ops::{Index, IndexMut};
 use bevy::prelude::*;
 use crate::constants::{MAP_HEIGHT, MAP_WIDTH, TILE_SIZE};
-
-//@todo Mark when an entity has moved
-struct EntityPositions {
-    map_data_index: usize,
-    has_changed: bool
-}
 
 #[derive(Resource, Debug)]
 pub struct MapResource {
     map_data: [Option<Entity>; MAP_WIDTH as usize * MAP_HEIGHT as usize],
     entity_positions: HashMap<Entity, usize>,
+    changed_entities: HashSet<Entity>,
 }
 
 impl Default for MapResource {
@@ -20,6 +15,7 @@ impl Default for MapResource {
         Self {
             map_data: [None; MAP_WIDTH as usize * MAP_HEIGHT as usize],
             entity_positions: HashMap::new(),
+            changed_entities: HashSet::new(),
         }
     }
 }
@@ -41,6 +37,18 @@ impl IndexMut<usize> for MapResource {
 impl MapResource {
     pub fn get_entity_positions(&self) -> HashMap<Entity, usize> {
         self.entity_positions.clone()
+    }
+
+    pub fn get_changed_entity_positions(&self) -> HashMap<Entity, usize> {
+        self.entity_positions
+            .iter()
+            .filter(|(entity, _)| self.changed_entities.contains(entity))
+            .map(|(entity, &pos)| (*entity, pos))
+            .collect()
+    }
+
+    pub fn clear_changed_entity_positions(&mut self) {
+        self.changed_entities.clear();
     }
 
     pub fn get_position(&self, entity: Entity) -> Option<(i32, i32)> {
@@ -81,6 +89,7 @@ impl MapResource {
         if self.map_data[idx].is_none() {
             self.map_data[idx] = Some(entity);
             self.entity_positions.insert(entity, idx);
+            self.changed_entities.insert(entity);
             return true;
         }
 
@@ -107,6 +116,8 @@ impl MapResource {
             self.map_data[new_idx] = Some(entity);
             self.map_data[current_idx] = None;
             self.entity_positions.insert(entity, new_idx);
+
+            self.changed_entities.insert(entity);
 
             return true;
         }
