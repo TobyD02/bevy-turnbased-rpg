@@ -7,6 +7,7 @@ use crate::components::stats_component::StatsComponent;
 use crate::constants::{MAP_HEIGHT, MAP_WIDTH};
 use crate::enums::map_layer_enum::MapLayerEnum::MapLayerCharacters;
 use crate::enums::tile_sprite_enum::TileSpriteEnum::CharacterMinotaur;
+use crate::enums::turn_group_enum::TurnGroupEnum;
 use crate::resources::map_resource::MapResource;
 use crate::resources::turn_order_resource::TurnOrderResource;
 
@@ -19,7 +20,7 @@ pub fn setup_character_system(
     mut map_resource: ResMut<MapResource>,
 ) {
 
-    for i in 1..10 {
+    for i in 1..20 {
         let texture = asset_server.load("monochrome_tilemap.png");
         let layout =
             TextureAtlasLayout::from_grid(UVec2::splat(8), 16, 10, Some(UVec2::splat(1)), None);
@@ -46,7 +47,7 @@ pub fn setup_character_system(
             }),
         ).id();
 
-        turn_order.add_entity(initiative, entity);
+        turn_order.add_entity(initiative, entity, TurnGroupEnum::Enemy);
         loop {
             let rand_x = rng.next_u32() % MAP_WIDTH as u32;
             let rand_y = rng.next_u32() % MAP_HEIGHT as u32;

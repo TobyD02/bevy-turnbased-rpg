@@ -6,7 +6,7 @@ use crate::constants::{MAP_HEIGHT, MAP_WIDTH, TILE_SIZE};
 
 #[derive(Resource, Debug)]
 pub struct MapResource {
-    map_data: [Option<Entity>; MAP_WIDTH as usize * MAP_HEIGHT as usize],
+    map_data: Vec<Option<Entity>>,
     entity_positions: HashMap<Entity, usize>,
     changed_entities: HashSet<Entity>,
 }
@@ -14,7 +14,7 @@ pub struct MapResource {
 impl Default for MapResource {
     fn default() -> Self {
         Self {
-            map_data: [None; MAP_WIDTH as usize * MAP_HEIGHT as usize],
+            map_data: vec![None; MAP_WIDTH as usize * MAP_HEIGHT as usize],
             entity_positions: HashMap::new(),
             changed_entities: HashSet::new(),
         }

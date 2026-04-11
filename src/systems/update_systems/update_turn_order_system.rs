@@ -20,9 +20,9 @@ pub fn update_turn_order_system(
     }
 
     if turn_order.is_should_reorder() {
-        for (order_position, entity) in turn_order.get_entities_mut().iter_mut() {
-            if let Ok((stats, name)) = query.get(*entity) {
-                *order_position = stats.roll_initiative(rng.next_u32());
+        for turn_entity in turn_order.get_entities_mut().iter_mut() {
+            if let Ok((stats, name)) = query.get(turn_entity.entity) {
+                turn_entity.initiative = stats.roll_initiative(rng.next_u32());
             }
         }
 
@@ -30,9 +30,9 @@ pub fn update_turn_order_system(
 
         turn_order.set_should_reorder(false);
 
-        for (initiative, e) in turn_order.get_entities() {
-            if let Ok((stats, name)) = query.get(*e) {
-                logger.log(format!("{:?}: {:?}", initiative, name))
+        for turn_entity in turn_order.get_entities() {
+            if let Ok((stats, name)) = query.get(turn_entity.entity) {
+                logger.log(format!("{:?}: {:?}", turn_entity.initiative, name))
             }
         }
     }
