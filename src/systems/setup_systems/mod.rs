@@ -5,3 +5,4 @@ mod setup_camera_system;
 mod setup_game_log_system;
 mod setup_ui_camera_system;
 pub mod _plugin;
+mod setup_map_system;

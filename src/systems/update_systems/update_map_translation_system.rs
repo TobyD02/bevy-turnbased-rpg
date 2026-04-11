@@ -1,10 +1,13 @@
 use bevy::prelude::*;
-use crate::components::map_position_component::MapPositionComponent;
+use crate::resources::map_resource::MapResource;
 
+// @todo Only update entities that have moved
 pub fn update_map_translation_system(
-    mut query: Query<(&MapPositionComponent, &mut Transform)>
+    mut map_resource: ResMut<MapResource>,
+    mut entity_query: Query<&mut Transform>,
 ) {
-    for (map_position, mut transform) in query.iter_mut() {
-        map_position.update_transform(&mut *transform);
+    for (e, _) in map_resource.get_entity_positions().iter() {
+        let mut transform = entity_query.get_mut(*e).unwrap();
+        map_resource.update_entity_transform(*e, &mut transform);
     }
 }

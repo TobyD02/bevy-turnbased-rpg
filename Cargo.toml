@@ -8,3 +8,4 @@ bevy = "0.18.1"
 rand_core = "0.10"
 bevy_rand = "0.14"
 bevy_prng = { version = "0.14", features = ["chacha20", "wyrand"] }
+pathfinding = "4.15.0"

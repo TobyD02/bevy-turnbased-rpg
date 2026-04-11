@@ -1,7 +1,6 @@
 use bevy::prelude::*;
 use crate::components::character_component::CharacterComponent;
 use crate::components::health_component::*;
-use crate::components::map_position_component::MapPositionComponent;
 use crate::components::stats_component::*;
 use crate::components::turn_taker_component::TurnTakerComponent;
 
@@ -11,9 +10,9 @@ pub struct CharacterEntityBundle {
     pub sprite: Sprite,
     pub stats: StatsComponent,
     pub health: HealthComponent,
-    pub map_position: MapPositionComponent,
     pub character: CharacterComponent,
-    pub turn_taker: TurnTakerComponent
+    pub turn_taker: TurnTakerComponent,
+    pub name: Name
 }
 
 impl Default for CharacterEntityBundle {
@@ -23,9 +22,9 @@ impl Default for CharacterEntityBundle {
             sprite: Default::default(),
             stats: Default::default(),
             health: Default::default(),
-            map_position: Default::default(),
             character: CharacterComponent,
-            turn_taker: TurnTakerComponent
+            turn_taker: TurnTakerComponent,
+            name: Name::new("Some Character")
         }
     }
 }

@@ -1,6 +1,5 @@
 use bevy::prelude::*;
 use crate::components::health_component::*;
-use crate::components::map_position_component::MapPositionComponent;
 use crate::components::player_component::PlayerComponent;
 use crate::components::stats_component::*;
 use crate::components::turn_taker_component::TurnTakerComponent;
@@ -11,9 +10,9 @@ pub struct PlayerEntityBundle {
     pub sprite: Sprite,
     pub stats: StatsComponent,
     pub health: HealthComponent,
-    pub map_position: MapPositionComponent,
     pub player: PlayerComponent,
-    pub turn_taker: TurnTakerComponent
+    pub turn_taker: TurnTakerComponent,
+    pub name: Name
 }
 
 impl Default for PlayerEntityBundle {
@@ -23,9 +22,9 @@ impl Default for PlayerEntityBundle {
             sprite: Default::default(),
             stats: Default::default(),
             health: Default::default(),
-            map_position: Default::default(),
             player: PlayerComponent,
             turn_taker: TurnTakerComponent,
+            name: Name::new("Player")
         }
     }
 }
