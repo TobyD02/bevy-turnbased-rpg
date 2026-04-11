@@ -15,5 +15,6 @@ fn main() {
         .add_plugins(DefaultPlugins.set(ImagePlugin::default_nearest()))
         .add_plugins(EntropyPlugin::<WyRand>::default())
         .add_plugins(SystemsPlugin)
+        .insert_resource(ClearColor(Color::srgb(0., 0., 0.)))
         .run();
 }

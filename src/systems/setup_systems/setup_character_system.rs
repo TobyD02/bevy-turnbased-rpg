@@ -1,15 +1,15 @@
-use crate::entities::character_entity::CharacterEntityBundle;
-use bevy::prelude::*;
-use bevy_prng::WyRand;
-use bevy_rand::global::GlobalRng;
-use rand_core::Rng;
 use crate::components::stats_component::StatsComponent;
 use crate::constants::{MAP_HEIGHT, MAP_WIDTH};
+use crate::entities::character_entity::CharacterEntityBundle;
 use crate::enums::map_layer_enum::MapLayerEnum::MapLayerCharacters;
 use crate::enums::tile_sprite_enum::TileSpriteEnum::CharacterMinotaur;
 use crate::enums::turn_group_enum::TurnGroupEnum;
 use crate::resources::map_resource::MapResource;
 use crate::resources::turn_order_resource::TurnOrderResource;
+use bevy::prelude::*;
+use bevy_prng::WyRand;
+use bevy_rand::global::GlobalRng;
+use rand_core::Rng;
 
 pub fn setup_character_system(
     mut commands: Commands,
@@ -19,7 +19,6 @@ pub fn setup_character_system(
     mut rng: Single<&mut WyRand, With<GlobalRng>>,
     mut map_resource: ResMut<MapResource>,
 ) {
-
     for i in 1..5 {
         let texture = asset_server.load("monochrome_tilemap.png");
         let layout =
@@ -28,24 +27,28 @@ pub fn setup_character_system(
         let stats = StatsComponent::default();
 
         let initiative = stats.roll_initiative(rng.next_u32());
-        let entity = commands.spawn(
-            (CharacterEntityBundle {
-                transform: Transform {
-                    translation: Vec3::splat(MapLayerCharacters.float()),
-                    ..Default::default()
-                },
-                sprite: Sprite::from_atlas_image(
-                    texture,
-                    TextureAtlas {
-                        layout: texture_atlas_layout,
-                        index: CharacterMinotaur.usize(),
+        let entity = commands
+            .spawn(
+                (CharacterEntityBundle {
+                    transform: Transform {
+                        translation: Vec3::splat(MapLayerCharacters.float()),
+                        ..Default::default()
                     },
-                ),
-                stats,
-                name: Name::new(format!("Character {}", i)),
-                ..Default::default()
-            }),
-        ).id();
+                    sprite: Sprite {
+                        image: texture,
+                        texture_atlas: Some(TextureAtlas {
+                            layout: texture_atlas_layout,
+                            index: CharacterMinotaur.usize(),
+                        }),
+                        color: Color::srgb(1., 0., 0.),
+                        ..Default::default()
+                    },
+                    stats,
+                    name: Name::new(format!("Character {}", i)),
+                    ..Default::default()
+                }),
+            )
+            .id();
 
         turn_order.add_entity(initiative, entity, TurnGroupEnum::Enemy);
         loop {
@@ -53,7 +56,7 @@ pub fn setup_character_system(
             let rand_y = rng.next_u32() % MAP_HEIGHT as u32;
             let character_did_spawn = map_resource.set_tile(entity, rand_x as i32, rand_y as i32);
             if character_did_spawn {
-                break
+                break;
             }
         }
     }

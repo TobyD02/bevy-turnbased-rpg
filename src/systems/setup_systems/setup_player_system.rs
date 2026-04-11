@@ -34,13 +34,15 @@ pub fn setup_player_system(
                 translation: Vec3::splat(MapLayerPlayers.float()),
                 ..Default::default()
             },
-            sprite: Sprite::from_atlas_image(
-                texture,
-                TextureAtlas {
+            sprite: Sprite {
+                image: texture,
+                texture_atlas: Some(TextureAtlas {
                     layout: texture_atlas_layout,
                     index: PlayerIdle.usize(),
-                },
-            ),
+                }),
+                color: Color::srgb(1., 1., 0.),
+                ..Default::default()
+            },
             ..Default::default()
         }),
     ).id();
