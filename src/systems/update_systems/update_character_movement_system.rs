@@ -16,7 +16,7 @@ pub fn update_character_movement_system(
     mut logger: ResMut<GameLogResource>,
     mut map_resource: ResMut<MapResource>,
 ) {
-    // if !keys.pressed(AllowCharacterTurn.keycode()) {
+    // if !keys.just_pressed(AllowCharacterTurn.keycode()) {
     //     return;
     // }
 

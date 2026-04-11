@@ -32,25 +32,25 @@ pub fn update_player_movement_system(
             None => return,
         }
 
-        if keys.pressed(ControlMappingEnum::PlayerMoveUp.keycode()) {
+        if keys.just_pressed(ControlMappingEnum::PlayerMoveUp.keycode()) {
             if !map_resource.is_position_free(map_pos.0, map_pos.1) {
                 did_move = map_resource.move_tile(entity, map_pos.0, map_pos.1 + 1);
             }
         }
 
-        if keys.pressed(ControlMappingEnum::PlayerMoveDown.keycode()) {
+        if keys.just_pressed(ControlMappingEnum::PlayerMoveDown.keycode()) {
             if !map_resource.is_position_free(map_pos.0, map_pos.1) {
                 did_move = map_resource.move_tile(entity, map_pos.0, map_pos.1 - 1);
             }
         }
 
-        if keys.pressed(ControlMappingEnum::PlayerMoveRight.keycode()) {
+        if keys.just_pressed(ControlMappingEnum::PlayerMoveRight.keycode()) {
             if !map_resource.is_position_free(map_pos.0, map_pos.1) {
                 did_move = map_resource.move_tile(entity, map_pos.0 + 1, map_pos.1);
             }
         }
 
-        if keys.pressed(ControlMappingEnum::PlayerMoveLeft.keycode()) {
+        if keys.just_pressed(ControlMappingEnum::PlayerMoveLeft.keycode()) {
             if !map_resource.is_position_free(map_pos.0, map_pos.1) {
                 did_move = map_resource.move_tile(entity, map_pos.0 - 1, map_pos.1);
             }

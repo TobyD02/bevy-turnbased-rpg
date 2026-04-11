@@ -35,6 +35,7 @@ impl IndexMut<usize> for MapResource {
     }
 }
 
+// @todo: Add "free_tile_exists" method, which returns false when all tiles are assigned
 impl MapResource {
     pub fn get_entity_positions(&self) -> HashMap<Entity, usize> {
         self.entity_positions.clone()
@@ -143,14 +144,11 @@ impl MapResource {
             }
         };
 
-        if self.map_data[idx].is_none() {
-            self.map_data[idx] = Some(entity);
-            self.entity_positions.insert(entity, idx);
-            self.changed_entities.insert(entity);
-            return true;
-        }
+        self.map_data[idx] = Some(entity);
+        self.entity_positions.insert(entity, idx);
+        self.changed_entities.insert(entity);
+        true
 
-        false
     }
 
     pub fn move_tile(&mut self, entity: Entity, x: i32, y: i32) -> bool {

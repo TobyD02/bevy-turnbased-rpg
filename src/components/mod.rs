@@ -7,3 +7,4 @@ pub mod game_camera_component;
 pub mod game_log_component;
 pub mod game_log_text_component;
 pub mod ui_camera_component;
+pub mod wall_component;

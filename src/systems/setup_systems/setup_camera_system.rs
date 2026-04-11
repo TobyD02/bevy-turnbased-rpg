@@ -9,7 +9,7 @@ pub fn setup_camera_system(mut commands: Commands) {
         Camera::default(),
         Projection::Orthographic(OrthographicProjection {
             scaling_mode: ScalingMode::WindowSize,
-            scale: 1.,
+            scale: 0.5,
             ..OrthographicProjection::default_2d()
         }),
         GameCameraComponent,
