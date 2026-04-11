@@ -2,9 +2,9 @@ use crate::components::character_component::CharacterComponent;
 use crate::components::player_component::PlayerComponent;
 use crate::enums::control_mapping_enum::ControlMappingEnum::AllowCharacterTurn;
 use crate::resources::game_log_resource::GameLogResource;
+use crate::resources::map_resource::MapResource;
 use crate::resources::turn_order_resource::TurnOrderResource;
 use bevy::prelude::*;
-use crate::resources::map_resource::MapResource;
 
 pub fn update_character_movement_system(
     active_query: Query<&Name, With<CharacterComponent>>,
@@ -28,9 +28,7 @@ pub fn update_character_movement_system(
         Ok(name) => {
             active_name = name.clone();
         }
-        Err(_) => {
-            return
-        }
+        Err(_) => return,
     }
 
     let active_pos;
@@ -39,7 +37,7 @@ pub fn update_character_movement_system(
         None => {
             logger.log(format!("Failed to find entity in map {:?}", active_entity));
             turn_order.end_turn();
-            return
+            return;
         }
     }
 
@@ -49,17 +47,30 @@ pub fn update_character_movement_system(
         Err(_) => return,
     };
 
-    let direction_x = (player_pos.0 - active_pos.0).signum();
-    let direction_y = (player_pos.1 - active_pos.1).signum();
-    map_resource.move_tile(active_entity, active_pos.0 + direction_x, active_pos.1 + direction_y);
+    let next_pos;
+    match map_resource.get_path(active_pos, player_pos) {
+        Some(p) => {
+            next_pos = p[1];
+            println!("Current: {:?}, Next: {:?}",next_pos, active_pos);
+        },
+        None => {
+            turn_order.end_turn();
+            logger.log(format!("Character {:?} didnt move", active_name));
+            return;
+        }
+    }
+
+    map_resource.move_tile(
+        active_entity,
+        next_pos.0,
+        next_pos.1,
+    );
     turn_order.end_turn();
 
     let new_position = map_resource.get_position(active_entity).unwrap();
 
     logger.log(format!(
         "Character {:?} moved | x: {:?}, y: {:?}",
-        active_name,
-        new_position.0,
-        new_position.1,
+        active_name, new_position.0, new_position.1,
     ));
 }

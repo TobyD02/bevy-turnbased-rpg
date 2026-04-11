@@ -1,6 +1,7 @@
 use std::collections::{HashMap, HashSet};
 use std::ops::{Index, IndexMut};
 use bevy::prelude::*;
+use pathfinding::prelude::astar;
 use crate::constants::{MAP_HEIGHT, MAP_WIDTH, TILE_SIZE};
 
 #[derive(Resource, Debug)]
@@ -69,6 +70,62 @@ impl MapResource {
 
         let width = MAP_WIDTH as usize;
         Some(x as usize + y as usize * width)
+    }
+
+    fn idx_to_pos(&self, idx: usize) -> (i32, i32) {
+        let width = MAP_WIDTH as usize;
+        let x = (idx % width) as i32;
+        let y = (idx / width) as i32;
+        (x, y)
+    }
+
+    fn is_walkable(&self, x: i32, y: i32) -> bool {
+        match self.pos_to_idx(x, y) {
+            Some(idx) => self.map_data[idx].is_none(),
+            None => false,
+        }
+    }
+    pub fn get_path(
+        &self,
+        start: (i32, i32),
+        goal: (i32, i32),
+    ) -> Option<Vec<(i32, i32)>> {
+
+        let result = astar(
+            &start,
+
+            // neighbors
+            |&(x, y)| {
+                let directions = [
+                    (1, 0),
+                    (-1, 0),
+                    (0, 1),
+                    (0, -1),
+                ];
+
+                directions
+                    .iter()
+                    .filter_map(|(dx, dy)| {
+                        let nx = x + dx;
+                        let ny = y + dy;
+
+                        if (nx, ny) == goal || self.is_walkable(nx, ny) {
+                            Some(((nx, ny), 1)) // cost = 1
+                        } else {
+                            None
+                        }
+                    })
+                    .collect::<Vec<_>>()
+            },
+
+            // heuristic (Manhattan distance)
+            |&(x, y)| (x - goal.0).abs() + (y - goal.1).abs(),
+
+            // goal check
+            |&pos| pos == goal,
+        );
+
+        result.map(|(path, _cost)| path)
     }
 
     pub fn is_position_free(&self, x: i32, y: i32) -> bool {

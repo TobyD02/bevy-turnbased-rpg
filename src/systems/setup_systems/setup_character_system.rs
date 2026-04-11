@@ -19,7 +19,7 @@ pub fn setup_character_system(
     mut map_resource: ResMut<MapResource>,
 ) {
 
-    for i in 1..100 {
+    for i in 1..10 {
         let texture = asset_server.load("monochrome_tilemap.png");
         let layout =
             TextureAtlasLayout::from_grid(UVec2::splat(8), 16, 10, Some(UVec2::splat(1)), None);
@@ -48,9 +48,9 @@ pub fn setup_character_system(
 
         turn_order.add_entity(initiative, entity);
         loop {
-            let rand_x = (rng.next_u32() % MAP_WIDTH as u32) as i32 - MAP_WIDTH / 2;
-            let rand_y = (rng.next_u32() % MAP_HEIGHT as u32) as i32 - MAP_HEIGHT / 2;
-            let character_did_spawn = map_resource.set_tile(entity, rand_x, rand_y);
+            let rand_x = rng.next_u32() % MAP_WIDTH as u32;
+            let rand_y = rng.next_u32() % MAP_HEIGHT as u32;
+            let character_did_spawn = map_resource.set_tile(entity, rand_x as i32, rand_y as i32);
             if character_did_spawn {
                 break
             }
