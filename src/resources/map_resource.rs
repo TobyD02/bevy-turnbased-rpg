@@ -9,6 +9,7 @@ pub struct MapResource {
     map_data: Vec<Option<Entity>>,
     entity_positions: HashMap<Entity, usize>,
     changed_entities: HashSet<Entity>,
+    stale_entities: HashSet<Entity>,
 }
 
 impl Default for MapResource {
@@ -17,6 +18,7 @@ impl Default for MapResource {
             map_data: vec![None; MAP_WIDTH as usize * MAP_HEIGHT as usize],
             entity_positions: HashMap::new(),
             changed_entities: HashSet::new(),
+            stale_entities: HashSet::new(),
         }
     }
 }
@@ -40,6 +42,15 @@ impl MapResource {
     pub fn get_entity_positions(&self) -> HashMap<Entity, usize> {
         self.entity_positions.clone()
     }
+
+    pub fn get_stale_entities(&self) -> HashSet<Entity> {
+        self.stale_entities.clone()
+    }
+
+    pub fn clear_stale_entities(&mut self) {
+        self.stale_entities.clear();
+    }
+
 
     pub fn get_changed_entity_positions(&self) -> HashMap<Entity, usize> {
         self.entity_positions
@@ -144,11 +155,14 @@ impl MapResource {
             }
         };
 
+        if self[idx].is_some() {
+            self.stale_entities.insert(entity);
+        }
+
         self.map_data[idx] = Some(entity);
         self.entity_positions.insert(entity, idx);
         self.changed_entities.insert(entity);
         true
-
     }
 
     pub fn move_tile(&mut self, entity: Entity, x: i32, y: i32) -> bool {

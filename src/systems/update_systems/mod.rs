@@ -5,3 +5,4 @@ mod update_game_camera_system;
 mod update_draw_game_log_system;
 mod update_player_movement_system;
 pub mod _plugin;
+mod update_remove_stale_entities_system;
