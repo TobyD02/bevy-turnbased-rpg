@@ -24,7 +24,7 @@ pub fn update_player_movement_system(
             },
         }
 
-        let mut key_was_pressed = false;
+        let mut did_move = false;
         let map_pos;
 
         match map_resource.get_position(entity) {
@@ -34,33 +34,29 @@ pub fn update_player_movement_system(
 
         if keys.pressed(ControlMappingEnum::PlayerMoveUp.keycode()) {
             if !map_resource.is_position_free(map_pos.0, map_pos.1) {
-                map_resource.move_tile(entity, map_pos.0, map_pos.1 + 1);
+                did_move = map_resource.move_tile(entity, map_pos.0, map_pos.1 + 1);
             }
-            key_was_pressed = true;
         }
 
         if keys.pressed(ControlMappingEnum::PlayerMoveDown.keycode()) {
             if !map_resource.is_position_free(map_pos.0, map_pos.1) {
-                map_resource.move_tile(entity, map_pos.0, map_pos.1 - 1);
+                did_move = map_resource.move_tile(entity, map_pos.0, map_pos.1 - 1);
             }
-            key_was_pressed = true;
         }
 
         if keys.pressed(ControlMappingEnum::PlayerMoveRight.keycode()) {
             if !map_resource.is_position_free(map_pos.0, map_pos.1) {
-                map_resource.move_tile(entity, map_pos.0 + 1, map_pos.1);
+                did_move = map_resource.move_tile(entity, map_pos.0 + 1, map_pos.1);
             }
-            key_was_pressed = true;
         }
 
         if keys.pressed(ControlMappingEnum::PlayerMoveLeft.keycode()) {
             if !map_resource.is_position_free(map_pos.0, map_pos.1) {
-                map_resource.move_tile(entity, map_pos.0 - 1, map_pos.1);
+                did_move = map_resource.move_tile(entity, map_pos.0 - 1, map_pos.1);
             }
-            key_was_pressed = true;
         }
 
-        if key_was_pressed {
+        if did_move {
             let new_pos = map_resource.get_position(entity).unwrap();
             logger.log(format!("Player moved to new map position | x: {}, y: {}", new_pos.0, new_pos.1));
             turn_order.end_turn()
