@@ -3,7 +3,9 @@ use bevy::prelude::*;
 use bevy_prng::WyRand;
 use bevy_rand::global::GlobalRng;
 use rand_core::Rng;
+use crate::components::game_camera_component::GameCameraComponent;
 use crate::components::stats_component::StatsComponent;
+use crate::components::target_component::TargetComponent;
 use crate::constants::{MAP_HEIGHT, MAP_WIDTH};
 use crate::enums::map_layer_enum::MapLayerEnum::MapLayerPlayers;
 use crate::enums::tile_sprite_enum::TileSpriteEnum::PlayerIdle;
@@ -19,7 +21,8 @@ pub fn setup_player_system(
     mut turn_order: ResMut<TurnOrderResource>,
     mut rng: Single<&mut WyRand, With<GlobalRng>>,
     mut map_resource: ResMut<MapResource>,
-    mut logger: ResMut<GameLogResource>
+    mut logger: ResMut<GameLogResource>,
+    mut camera_query: Query<(&mut TargetComponent), With<GameCameraComponent>>
 ) {
     let texture = asset_server.load("monochrome_tilemap.png");
     let layout =
@@ -48,6 +51,10 @@ pub fn setup_player_system(
     ).id();
     turn_order.add_entity(initiative, entity, TurnGroupEnum::Player);
     let player_did_spawn = map_resource.set_tile(entity, MAP_WIDTH / 2, MAP_HEIGHT/ 2);
+
+    if let Ok(mut camera_target) = camera_query.single_mut() {
+        camera_target.set_target_entity(Some(entity))
+    }
 
     logger.log(format!("Spawned Player {:?}", player_did_spawn));
 }

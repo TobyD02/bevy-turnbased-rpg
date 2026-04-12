@@ -2,6 +2,7 @@ use crate::components::game_camera_component::GameCameraComponent;
 use crate::constants::{MAP_HEIGHT, MAP_WIDTH, TILE_SIZE};
 use bevy::camera::{ScalingMode, Viewport};
 use bevy::prelude::*;
+use crate::components::target_component::TargetComponent;
 
 pub fn setup_camera_system(mut commands: Commands) {
     commands.spawn((
@@ -18,5 +19,6 @@ pub fn setup_camera_system(mut commands: Commands) {
             MAP_HEIGHT as f32 * TILE_SIZE as f32 / 2.,
             0.0,
         )),
+        TargetComponent::default(),
     ));
 }
