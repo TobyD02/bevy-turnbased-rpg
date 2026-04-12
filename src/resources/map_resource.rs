@@ -156,7 +156,7 @@ impl MapResource {
         };
 
         if self[idx].is_some() {
-            self.stale_entities.insert(entity);
+            self.stale_entities.insert(self[idx].unwrap());
         }
 
         self.map_data[idx] = Some(entity);

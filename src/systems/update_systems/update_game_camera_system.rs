@@ -49,11 +49,8 @@ pub fn update_game_camera_system (
                     .rotation
                     .slerp(target_position.rotation, t);
 
-                println!("Slerping camera transform")
             }
         },
-        _ => {
-            println!("No Camera Target");return
-        }
+        _ => return
     }
 }

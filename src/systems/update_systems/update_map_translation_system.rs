@@ -11,10 +11,10 @@ pub fn update_map_translation_system(
         let (mut transform, name, entity) = entity_query.get_mut(*e).unwrap();
         map_resource.update_entity_transform(*e, &mut transform);
 
-        match name{
-            Some(n) => logger.log(format!("Moved {:?}", name)),
-            None => logger.log(format!("Moved {:?}", entity))
-        }
+        // match name{
+        //     Some(n) => logger.log(format!("Moved {:?}", name)),
+        //     None => logger.log(format!("Moved {:?}", entity))
+        // }
     }
 
     map_resource.clear_changed_entity_positions();
