@@ -7,7 +7,7 @@ use crate::systems::setup_systems::setup_turn_order_system::setup_turn_order_sys
 use crate::systems::setup_systems::setup_ui_camera_system::setup_ui_camera_system;
 use bevy::prelude::*;
 use crate::systems::setup_systems::setup_player_inventory_ui_system::setup_player_inventory_ui_system;
-use crate::systems::setup_systems::setup_player_skills_ui_system::setup_player_skills_ui_system;
+use crate::systems::setup_systems::setup_player_equipment_ui_system::setup_player_equipment_ui_system;
 
 pub struct SetupSystemsPlugin;
 
@@ -19,7 +19,7 @@ impl Plugin for SetupSystemsPlugin {
                 setup_ui_camera_system,
                 setup_game_log_ui_system,
                 setup_player_inventory_ui_system,
-                setup_player_skills_ui_system,
+                setup_player_equipment_ui_system,
                 setup_map_system,
                 setup_camera_system,
                 setup_turn_order_system,

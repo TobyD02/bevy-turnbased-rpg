@@ -3,7 +3,7 @@ use bevy::prelude::{default, BackgroundColor, Commands, Entity, FlexDirection, N
 use crate::components::ui_camera_component::UiCameraComponent;
 use crate::resources::game_log_resource::GameLogResource;
 
-pub fn setup_player_skills_ui_system(
+pub fn setup_player_equipment_ui_system(
     mut commands: Commands,
     query: Query<Entity, With<UiCameraComponent>>
 ) {
@@ -32,7 +32,7 @@ pub fn setup_player_skills_ui_system(
         UiTargetCamera(ui_camera)
     )).with_children(|parent| {
         parent.spawn((
-            Text::new("Skills"), // start empty
+            Text::new("Equipment"), // start empty
             TextFont {
                 font_size: 14.0,
                 ..Default::default()
