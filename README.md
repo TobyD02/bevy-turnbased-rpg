@@ -28,15 +28,20 @@
                 }
             }
             ```
+        - Each frame/cycle of the ecs, a new event will be pulled out of queue and set as the current.
+        - IMPORTANT - this system will need to run before any event handling systems. This way, once the current event
+          is set, event handling systems can check if they handle the current game event, and if they do perform their
+          logic within this tick of the ecs (publishing events, moving entities, etc...).
         - When the full game event queue has been processed (i.e. pop_front() returns None), the turn is ended, which
-          also sets turn_commited to false.
+          sets the next entity in the turn order as the currently active turn, as well as also setting turn_commited to
+          false.
         - As a slight pitfall, turn_groups may not work any longer.
             - There is potential to have some `GameStateResource`, with values of `GameStateCombat` and
               `GameStateExploration`. If the player is exploring, then all decisions can be processed in groups, as
               there (likely) wont be any world changes taking place. Mostly movement etc... However if in combat, turn
               groups are not processed, instead entities are processed individually so that when they intend to
               end_turn, the events can be processed, and the world updated before the next entity takes its actions.
-            - Worst case - I shelve turn groups for now. 
+            - Worst case - I shelve turn groups for now.
 
 ## TODO 11/04/26
 
