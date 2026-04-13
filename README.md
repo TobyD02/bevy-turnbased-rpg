@@ -1,8 +1,46 @@
 # TurnBased RPG
 
-## TODO
+## TODO 13/04/26
 
-- [ ] Turn Groupsy
+- [ ] Game Events
+    - Core Idea, entity actions on their turns may trigger subsequent events etc... I need a way of triggering/handling
+      these.
+    - IDEA - GameEventQueueResource (and CurrentGameEventResource).
+        - On a turn, the entity pushes "Intents" (GameEvents) to the event queue. Once the entity has finished declaring
+          its intents, it sets some "commit_turn()" method (just a boolean).
+        - Important - once a turn is commited, that entity cannot take any more action. However, since the turn has not
+          been ended, neither can any other entity. This puts the world in a freeze, allowing for events to be processed
+        - When turn is commited, perform a simple check:
+            ```rust
+            pub fn process_game_event_queue(
+                mut turn_order: ResMut<TurnOrderResource>,
+                mut current_game_event: ResMut<CurrentGameEventResource>,
+                mut game_event_queue: ResMut<GameEventQueueResource>
+              ) {
+                if !turn_order.is_turn_commited() {
+                    return;
+                }
+              
+                if let Some(event) = game_event_queue.pop_front() {
+                    current_game_event = event
+                } else {
+                    turn_order.end_turn() // sets turn_commited to false, and sets turn to next entity
+                }
+            }
+            ```
+        - When the full game event queue has been processed (i.e. pop_front() returns None), the turn is ended, which
+          also sets turn_commited to false.
+        - As a slight pitfall, turn_groups may not work any longer.
+            - There is potential to have some `GameStateResource`, with values of `GameStateCombat` and
+              `GameStateExploration`. If the player is exploring, then all decisions can be processed in groups, as
+              there (likely) wont be any world changes taking place. Mostly movement etc... However if in combat, turn
+              groups are not processed, instead entities are processed individually so that when they intend to
+              end_turn, the events can be processed, and the world updated before the next entity takes its actions.
+            - Worst case - I shelve turn groups for now. 
+
+## TODO 11/04/26
+
+- [ ] Turn Groups
     - In the turn order struct, give each entity a "turn group". Then add a new method that allows you to "
       get_active_in_turn_group", which returns an vec of all entities in that turn group which take a turn before the
       next intiative in a different turn group
