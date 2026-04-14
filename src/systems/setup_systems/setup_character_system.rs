@@ -19,7 +19,7 @@ pub fn setup_character_system(
     mut rng: Single<&mut WyRand, With<GlobalRng>>,
     mut map_resource: ResMut<MapResource>,
 ) {
-    for i in 1..50 {
+    for i in 1..10 {
         let texture = asset_server.load("monochrome_tilemap.png");
         let layout =
             TextureAtlasLayout::from_grid(UVec2::splat(8), 16, 10, Some(UVec2::splat(1)), None);

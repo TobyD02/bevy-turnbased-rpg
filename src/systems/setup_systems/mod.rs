@@ -8,3 +8,4 @@ pub(crate) mod _plugin;
 mod setup_map_system;
 mod setup_player_inventory_ui_system;
 mod setup_player_equipment_ui_system;
+pub mod setup_game_events_system;

@@ -1,6 +1,6 @@
-use std::cmp::PartialEq;
 use crate::enums::turn_group_enum::TurnGroupEnum;
 use bevy::prelude::*;
+use std::cmp::PartialEq;
 
 #[derive(Debug, PartialEq)]
 pub struct TurnEntity {
@@ -14,6 +14,8 @@ pub struct TurnOrderResource {
     entities: Vec<(TurnEntity)>,
     active_entity: usize,
     should_reorder: bool,
+    turn_commited: bool,
+    turn_iteration: i32,
 }
 
 impl Default for TurnOrderResource {
@@ -22,6 +24,8 @@ impl Default for TurnOrderResource {
             entities: Vec::new(),
             active_entity: 0,
             should_reorder: true,
+            turn_commited: false,
+            turn_iteration: 0,
         }
     }
 }
@@ -53,8 +57,20 @@ impl TurnOrderResource {
             .sort_by(|a, b| b.initiative.cmp(&a.initiative));
     }
 
+    pub fn is_turn_committed(&self) -> bool {
+        self.turn_commited
+    }
+
+    pub fn commit_turn(&mut self) {
+        self.turn_commited = true;
+    }
+
     pub fn get_active_entity(&self) -> Option<Entity> {
         self.entities.get(self.active_entity).map(|e| e.entity)
+    }
+
+    pub fn get_turn_iteration(&self) -> i32 {
+        self.turn_iteration
     }
 
     pub fn get_active_turn_group(&self) -> Option<TurnGroupEnum> {
@@ -85,16 +101,20 @@ impl TurnOrderResource {
     }
 
     pub fn end_turn(&mut self) {
+        self.turn_commited = false;
         let len = self.entities.len();
         if len == 0 {
             return;
         }
-        self.active_entity = (self.active_entity + 1) % len;
+        self.active_entity = (self.active_entity + 1);
+        if self.active_entity >= len {
+            self.active_entity = 0;
+            self.turn_iteration += 1;
+        }
     }
 
     pub fn sort(&mut self) {
-        self
-            .entities
+        self.entities
             .sort_by(|a, b| b.initiative.cmp(&a.initiative));
     }
 }

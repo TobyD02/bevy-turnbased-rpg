@@ -6,3 +6,6 @@ mod update_draw_game_log_system;
 mod update_player_movement_system;
 pub mod _plugin;
 mod update_remove_stale_entities_system;
+mod update_game_event_systems;
+mod update_process_game_event_queue_system;
+pub mod update_movement_trail_system;

@@ -9,3 +9,6 @@ pub mod game_log_text_component;
 pub mod ui_camera_component;
 pub mod wall_component;
 pub mod target_component;
+pub mod mover_component;
+pub mod movement_trail_component;
+pub mod attacker_component;

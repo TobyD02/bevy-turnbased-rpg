@@ -42,6 +42,14 @@
               groups are not processed, instead entities are processed individually so that when they intend to
               end_turn, the events can be processed, and the world updated before the next entity takes its actions.
             - Worst case - I shelve turn groups for now.
+            - Actually, with the intent model, it might be feasible to just throw everything in. Intents are not
+              actions, and can be rejected if later events affect them.
+    - Proof of concept:
+        - MoveTileIntent from player on key press.
+            - May have to limit the amount of movements a player can make with the handler, i.e. Components with a move
+              speed component that deducts each turn?
+        - MoveTileIntent creates a new TrailGameEvent which spawns a decaying sprite on the tile just left
+            - i.e. Before moving, create event at current player position, then move player position.
 
 ## TODO 11/04/26
 

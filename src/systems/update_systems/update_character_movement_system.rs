@@ -6,15 +6,18 @@ use crate::resources::game_log_resource::GameLogResource;
 use crate::resources::map_resource::MapResource;
 use crate::resources::turn_order_resource::TurnOrderResource;
 use bevy::prelude::*;
+use crate::components::mover_component::MoverComponent;
 use crate::enums::turn_group_enum::TurnGroupEnum;
+use crate::resources::game_event_queue_resource::GameEventQueueResource;
 
 pub fn update_character_movement_system(
-    active_query: Query<&Name, With<CharacterComponent>>,
+    mut active_query: Query<(&Name, &mut MoverComponent), With<CharacterComponent>>,
     mut turn_order: ResMut<TurnOrderResource>,
     player_query: Query<Entity, With<PlayerComponent>>,
     keys: Res<ButtonInput<KeyCode>>,
     mut logger: ResMut<GameLogResource>,
-    mut map_resource: ResMut<MapResource>,
+    map_resource: ResMut<MapResource>,
+    mut game_event_queue_resource: ResMut<GameEventQueueResource>,
 ) {
     // if !keys.just_pressed(AllowCharacterTurn.keycode()) {
     //     return;
@@ -29,14 +32,22 @@ pub fn update_character_movement_system(
         _ => return
     }
 
-    for active_entity in turn_order.get_active_entities_in_turn_group()
+    if Some(turn_order.get_active_entity()).is_some()
     {
-        let active_name;
-        match active_query.get(active_entity) {
-            Ok(name) => {
-                active_name = name.clone();
-            }
+        if (turn_order.is_turn_committed()) {
+            return
+        }
+
+        let active_entity = turn_order.get_active_entity().unwrap();
+        let (active_name, mut active_mover) = match active_query.get_mut(active_entity) {
+            Ok((name, mover)) => (name.clone(), mover),
             Err(_) => return,
+        };
+
+        if !active_mover.can_move() {
+            turn_order.commit_turn();
+            active_mover.reset_turn_movements();
+            return
         }
 
         let active_pos;
@@ -67,18 +78,7 @@ pub fn update_character_movement_system(
             }
         }
 
-        map_resource.move_tile(
-            active_entity,
-            next_pos.0,
-            next_pos.1,
-        );
-        turn_order.end_turn();
-
-        let new_position = map_resource.get_position(active_entity).unwrap();
-
-        logger.log(format!(
-            "Character {:?} moved | x: {:?}, y: {:?}",
-            active_name, new_position.0, new_position.1,
-        ));
+        active_mover.set_target_pos((next_pos.0, next_pos.1));
+        game_event_queue_resource.move_intent(active_entity);
     }
 }

@@ -4,7 +4,6 @@ pub mod systems;
 mod constants;
 pub mod entities;
 pub mod resources;
-
 use bevy::prelude::*;
 use bevy_rand::plugin::EntropyPlugin;
 use bevy_prng::WyRand;

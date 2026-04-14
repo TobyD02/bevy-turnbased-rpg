@@ -75,6 +75,10 @@ impl MapResource {
         })
     }
 
+    pub fn map_to_global(x: i32, y: i32) -> (f32, f32) {
+        (x as f32 * TILE_SIZE as f32, y as f32 * TILE_SIZE as f32)
+    }
+
     fn pos_to_idx(&self, x: i32, y: i32) -> Option<usize> {
         if x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT {
             return None;
@@ -148,6 +152,24 @@ impl MapResource {
     }
 
     pub fn set_tile(&mut self, entity: Entity, x: i32, y: i32) -> bool {
+        let idx = match self.pos_to_idx(x, y) {
+            Some(idx) => idx,
+            None => {
+                return false;
+            }
+        };
+
+        if self[idx].is_some() {
+            self.stale_entities.insert(self[idx].unwrap());
+        }
+
+        self.map_data[idx] = Some(entity);
+        self.entity_positions.insert(entity, idx);
+        self.changed_entities.insert(entity);
+        true
+    }
+
+    pub fn set_background_tile(&mut self, entity: Entity, x: i32, y: i32) -> bool {
         let idx = match self.pos_to_idx(x, y) {
             Some(idx) => idx,
             None => {
