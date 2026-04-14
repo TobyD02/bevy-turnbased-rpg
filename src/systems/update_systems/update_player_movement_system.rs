@@ -1,11 +1,13 @@
+use std::ops::Add;
 use bevy::prelude::*;
 use crate::components::mover_component::MoverComponent;
 use crate::components::player_component::PlayerComponent;
 use crate::enums::control_mapping_enum::ControlMappingEnum;
 use crate::resources::game_event_queue_resource::GameEventQueueResource;
 use crate::resources::game_log_resource::GameLogResource;
-use crate::resources::map_resource::MapResource;
+use crate::resources::map_resource::{MapCoord, MapResource};
 use crate::resources::turn_order_resource::TurnOrderResource;
+
 
 pub fn update_player_movement_system(
     mut query: Query<(Entity, &mut MoverComponent), With<PlayerComponent>>,
@@ -36,25 +38,25 @@ pub fn update_player_movement_system(
 
         if keys.just_pressed(ControlMappingEnum::PlayerMoveUp.keycode()) {
             // did_move = map_resource.move_tile(entity, map_pos.0, map_pos.1 + 1);
-            mover.set_target_pos((map_pos.0, map_pos.1 + 1));
+            mover.set_target_pos(map_pos + MapCoord::up());
             game_event_queue_resource.move_intent(entity);
         }
 
         if keys.just_pressed(ControlMappingEnum::PlayerMoveDown.keycode()) {
             // did_move = map_resource.move_tile(entity, map_pos.0, map_pos.1 - 1);
-            mover.set_target_pos((map_pos.0, map_pos.1 - 1));
+            mover.set_target_pos(map_pos + MapCoord::down());
             game_event_queue_resource.move_intent(entity);
         }
 
         if keys.just_pressed(ControlMappingEnum::PlayerMoveRight.keycode()) {
             // did_move = map_resource.move_tile(entity, map_pos.0 + 1, map_pos.1);
-            mover.set_target_pos((map_pos.0 + 1, map_pos.1));
+            mover.set_target_pos(map_pos + MapCoord::right());
             game_event_queue_resource.move_intent(entity);
         }
 
         if keys.just_pressed(ControlMappingEnum::PlayerMoveLeft.keycode()) {
             // did_move = map_resource.move_tile(entity, map_pos.0 - 1, map_pos.1);
-            mover.set_target_pos((map_pos.0 - 1, map_pos.1));
+            mover.set_target_pos(map_pos + MapCoord::left());
             game_event_queue_resource.move_intent(entity);
         }
 

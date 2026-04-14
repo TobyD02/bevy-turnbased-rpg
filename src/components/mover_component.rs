@@ -1,10 +1,11 @@
 use bevy::prelude::*;
+use crate::resources::map_resource::MapCoord;
 
 #[derive(Component)]
 pub struct MoverComponent {
     move_speed: i32,
     turn_movements: i32,
-    target_pos: Option<(i32, i32)>
+    target_pos: Option<MapCoord>
 }
 
 impl Default for MoverComponent {
@@ -27,10 +28,10 @@ impl MoverComponent {
     pub fn get_move_speed(&self) -> i32{
         self.move_speed
     }
-    pub fn get_target_pos(&self) -> Option<(i32, i32)> {
+    pub fn get_target_pos(&self) -> Option<MapCoord> {
         self.target_pos.clone()
     }
-    pub fn set_target_pos(&mut self, target_pos: (i32, i32)) {
+    pub fn set_target_pos(&mut self, target_pos: MapCoord) {
         self.target_pos = Some(target_pos);
     }
     pub fn get_turn_movements(&self) -> i32 {

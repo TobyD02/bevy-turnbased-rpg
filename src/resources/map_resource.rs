@@ -1,8 +1,58 @@
 use std::collections::{HashMap, HashSet};
-use std::ops::{Index, IndexMut};
+use std::ops::{Index, IndexMut, Sub, Add};
 use bevy::prelude::*;
+use bevy::prelude::ops::sqrt;
 use pathfinding::prelude::astar;
 use crate::constants::{MAP_HEIGHT, MAP_WIDTH, TILE_SIZE};
+
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
+pub struct MapCoord {
+    pub x: i32,
+    pub y: i32,
+}
+
+impl MapCoord {
+    pub fn length(&self) -> i32 {
+        sqrt((self.x * self.x + self.y * self.y) as f32) as i32
+    }
+    pub fn up() -> MapCoord {
+        MapCoord { x: 0, y: 1 }
+    }
+
+    pub fn down() -> MapCoord {
+        MapCoord { x: 0, y: -1 }
+    }
+
+    pub fn left() -> MapCoord {
+        MapCoord { x: -1, y: 0 }
+    }
+
+    pub fn right() -> MapCoord {
+        MapCoord { x: 1, y: 0 }
+    }
+}
+
+impl Sub for MapCoord {
+    type Output = MapCoord;
+
+    fn sub(self, other: Self) -> Self::Output {
+        Self {
+            x: self.x - other.x,
+            y: self.y - other.y,
+        }
+    }
+}
+
+impl Add for MapCoord {
+    type Output = MapCoord;
+
+    fn add(self, other: MapCoord) -> Self::Output {
+        Self {
+            x: self.x + other.x,
+            y: self.y + other.y
+        }
+    }
+}
 
 #[derive(Resource, Debug)]
 pub struct MapResource {
@@ -37,7 +87,6 @@ impl IndexMut<usize> for MapResource {
     }
 }
 
-// @todo: Add "free_tile_exists" method, which returns false when all tiles are assigned
 impl MapResource {
     pub fn get_entity_positions(&self) -> HashMap<Entity, usize> {
         self.entity_positions.clone()
@@ -51,7 +100,6 @@ impl MapResource {
         self.stale_entities.clear();
     }
 
-
     pub fn get_changed_entity_positions(&self) -> HashMap<Entity, usize> {
         self.entity_positions
             .iter()
@@ -64,53 +112,60 @@ impl MapResource {
         self.changed_entities.clear();
     }
 
-    pub fn get_position(&self, entity: Entity) -> Option<(i32, i32)> {
+    pub fn get_position(&self, entity: Entity) -> Option<MapCoord> {
         self.entity_positions.get(&entity).map(|&idx| {
             let width = MAP_WIDTH as usize;
-
-            let x = (idx % width) as i32;
-            let y = (idx / width) as i32;
-
-            (x, y)
+            MapCoord {
+                x: (idx % width) as i32,
+                y: (idx / width) as i32,
+            }
         })
     }
 
-    pub fn map_to_global(x: i32, y: i32) -> (f32, f32) {
-        (x as f32 * TILE_SIZE as f32, y as f32 * TILE_SIZE as f32)
+    pub fn map_to_global(map_coord: MapCoord) -> Vec2 {
+        Vec2::new(
+            map_coord.x as f32 * TILE_SIZE as f32,
+            map_coord.y as f32 * TILE_SIZE as f32,
+        )
     }
 
-    fn pos_to_idx(&self, x: i32, y: i32) -> Option<usize> {
-        if x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT {
+    fn pos_to_idx(&self, map_coord: MapCoord) -> Option<usize> {
+        if map_coord.x < 0
+            || map_coord.x >= MAP_WIDTH
+            || map_coord.y < 0
+            || map_coord.y >= MAP_HEIGHT
+        {
             return None;
         }
 
         let width = MAP_WIDTH as usize;
-        Some(x as usize + y as usize * width)
+        Some(map_coord.x as usize + map_coord.y as usize * width)
     }
 
-    fn idx_to_pos(&self, idx: usize) -> (i32, i32) {
+    fn idx_to_pos(&self, idx: usize) -> MapCoord {
         let width = MAP_WIDTH as usize;
-        let x = (idx % width) as i32;
-        let y = (idx / width) as i32;
-        (x, y)
+        MapCoord {
+            x: (idx % width) as i32,
+            y: (idx / width) as i32,
+        }
     }
 
-    fn is_walkable(&self, x: i32, y: i32) -> bool {
-        match self.pos_to_idx(x, y) {
+    fn is_walkable(&self, map_coord: MapCoord) -> bool {
+        match self.pos_to_idx(map_coord) {
             Some(idx) => self.map_data[idx].is_none(),
             None => false,
         }
     }
+
     pub fn get_path(
         &self,
-        start: (i32, i32),
-        goal: (i32, i32),
-    ) -> Option<Vec<(i32, i32)>> {
+        start: MapCoord,
+        goal: MapCoord,
+    ) -> Option<Vec<MapCoord>> {
 
         let result = astar(
-            &start,
+            &(start.x, start.y),
 
-            // neighbors
             |&(x, y)| {
                 let directions = [
                     (1, 0),
@@ -122,11 +177,13 @@ impl MapResource {
                 directions
                     .iter()
                     .filter_map(|(dx, dy)| {
-                        let nx = x + dx;
-                        let ny = y + dy;
+                        let next = MapCoord {
+                            x: x + dx,
+                            y: y + dy,
+                        };
 
-                        if (nx, ny) == goal || self.is_walkable(nx, ny) {
-                            Some(((nx, ny), 1)) // cost = 1
+                        if next == goal || self.is_walkable(next) {
+                            Some(((next.x, next.y), 1))
                         } else {
                             None
                         }
@@ -134,33 +191,33 @@ impl MapResource {
                     .collect::<Vec<_>>()
             },
 
-            // heuristic (Manhattan distance)
-            |&(x, y)| (x - goal.0).abs() + (y - goal.1).abs(),
+            |&(x, y)| (x - goal.x).abs() + (y - goal.y).abs(),
 
-            // goal check
-            |&pos| pos == goal,
+            |&pos| pos == (goal.x, goal.y),
         );
 
-        result.map(|(path, _cost)| path)
+        result.map(|(path, _)| {
+            path.into_iter()
+                .map(|(x, y)| MapCoord { x, y })
+                .collect()
+        })
     }
 
-    pub fn is_position_free(&self, x: i32, y: i32) -> bool {
-        match self.pos_to_idx(x, y) {
+    pub fn is_position_free(&self, coord: MapCoord) -> bool {
+        match self.pos_to_idx(coord) {
             Some(idx) => self.map_data[idx].is_none(),
             None => false,
         }
     }
 
-    pub fn set_tile(&mut self, entity: Entity, x: i32, y: i32) -> bool {
-        let idx = match self.pos_to_idx(x, y) {
+    pub fn set_tile(&mut self, entity: Entity, coord: MapCoord) -> bool {
+        let idx = match self.pos_to_idx(coord) {
             Some(idx) => idx,
-            None => {
-                return false;
-            }
+            None => return false,
         };
 
-        if self[idx].is_some() {
-            self.stale_entities.insert(self[idx].unwrap());
+        if let Some(existing) = self[idx] {
+            self.stale_entities.insert(existing);
         }
 
         self.map_data[idx] = Some(entity);
@@ -169,47 +226,26 @@ impl MapResource {
         true
     }
 
-    pub fn set_background_tile(&mut self, entity: Entity, x: i32, y: i32) -> bool {
-        let idx = match self.pos_to_idx(x, y) {
-            Some(idx) => idx,
-            None => {
-                return false;
-            }
-        };
-
-        if self[idx].is_some() {
-            self.stale_entities.insert(self[idx].unwrap());
-        }
-
-        self.map_data[idx] = Some(entity);
-        self.entity_positions.insert(entity, idx);
-        self.changed_entities.insert(entity);
-        true
+    pub fn set_background_tile(&mut self, entity: Entity, coord: MapCoord) -> bool {
+        self.set_tile(entity, coord)
     }
 
-    pub fn move_tile(&mut self, entity: Entity, x: i32, y: i32) -> bool {
-        let new_idx = match self.pos_to_idx(x, y) {
+    pub fn move_tile(&mut self, entity: Entity, coord: MapCoord) -> bool {
+        let new_idx = match self.pos_to_idx(coord) {
             Some(idx) => idx,
-            None => {
-                return false;
-            }
+            None => return false,
         };
 
         let current_idx = match self.entity_positions.get(&entity).copied() {
             Some(idx) => idx,
-            None => {
-                return false;
-            }
+            None => return false,
         };
 
-        // Only move if destination is free
         if self.map_data[new_idx].is_none() {
             self.map_data[new_idx] = Some(entity);
             self.map_data[current_idx] = None;
             self.entity_positions.insert(entity, new_idx);
-
             self.changed_entities.insert(entity);
-
             return true;
         }
 
@@ -217,14 +253,15 @@ impl MapResource {
     }
 
     pub fn update_entity_transform(&self, entity: Entity, transform: &mut Transform) -> bool {
-        let (x, y) = match self.get_position(entity) {
+        let pos = match self.get_position(entity) {
             Some(pos) => pos,
             None => return false,
         };
 
-        // NOTE: You probably want TILE_SIZE here instead of MAP_WIDTH
-        transform.translation.x = x as f32 * TILE_SIZE as f32;
-        transform.translation.y = y as f32 * TILE_SIZE as f32;
+        let world = Self::map_to_global(pos);
+
+        transform.translation.x = world.x;
+        transform.translation.y = world.y;
 
         true
     }

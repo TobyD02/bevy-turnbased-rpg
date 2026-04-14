@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use crate::resources::map_resource::MapCoord;
 
 #[derive(Debug)]
 pub enum GameEventEnum {
@@ -6,7 +7,7 @@ pub enum GameEventEnum {
         entity: Entity,
     },
     GameEventTileMoved {
-        from_tile: (i32, i32),
+        from_tile: MapCoord,
         col: Color
     },
 }

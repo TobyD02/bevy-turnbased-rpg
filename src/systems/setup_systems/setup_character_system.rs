@@ -4,7 +4,7 @@ use crate::entities::character_entity::CharacterEntityBundle;
 use crate::enums::map_layer_enum::MapLayerEnum::MapLayerCharacters;
 use crate::enums::tile_sprite_enum::TileSpriteEnum::CharacterMinotaur;
 use crate::enums::turn_group_enum::TurnGroupEnum;
-use crate::resources::map_resource::MapResource;
+use crate::resources::map_resource::{MapCoord, MapResource};
 use crate::resources::turn_order_resource::TurnOrderResource;
 use bevy::prelude::*;
 use bevy_prng::WyRand;
@@ -52,9 +52,9 @@ pub fn setup_character_system(
 
         turn_order.add_entity(initiative, entity, TurnGroupEnum::Enemy);
         loop {
-            let rand_x = rng.next_u32() % MAP_WIDTH as u32;
-            let rand_y = rng.next_u32() % MAP_HEIGHT as u32;
-            let character_did_spawn = map_resource.set_tile(entity, rand_x as i32, rand_y as i32);
+            let x = (rng.next_u32() % MAP_WIDTH as u32) as i32;
+            let y = (rng.next_u32() % MAP_HEIGHT as u32) as i32;
+            let character_did_spawn = map_resource.set_tile(entity, MapCoord{x, y});
             if character_did_spawn {
                 break;
             }

@@ -22,11 +22,11 @@ pub fn game_event_tile_moved_system(
         return;
     };
 
-    let transform_xy = MapResource::map_to_global(from_tile.0, from_tile.1);
+    let transform_xy = MapResource::map_to_global(*from_tile);
     commands.spawn(
         MovementTrailEntityBundle {
             transform: Transform {
-                translation: Vec3::new(transform_xy.0, transform_xy.1, MapLayerBackground.float()),
+                translation: Vec3::new(transform_xy.x, transform_xy.y, MapLayerBackground.float()),
                 ..Default::default()
             },
             trail: MovementTrailComponent::new(turn_order_resource.get_turn_iteration()),

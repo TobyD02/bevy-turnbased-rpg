@@ -29,7 +29,7 @@ impl Default for CharacterEntityBundle {
             health: Default::default(),
             character: CharacterComponent,
             turn_taker: TurnTakerComponent,
-            mover: MoverComponent::new(1),
+            mover: MoverComponent::new(3),
             attacker: AttackerComponent,
         }
     }

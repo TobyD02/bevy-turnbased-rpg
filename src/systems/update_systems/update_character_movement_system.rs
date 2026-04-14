@@ -1,7 +1,6 @@
-use std::cmp::PartialEq;
+use std::ops::Sub;
 use crate::components::character_component::CharacterComponent;
 use crate::components::player_component::PlayerComponent;
-use crate::enums::control_mapping_enum::ControlMappingEnum::AllowCharacterTurn;
 use crate::resources::game_log_resource::GameLogResource;
 use crate::resources::map_resource::MapResource;
 use crate::resources::turn_order_resource::TurnOrderResource;
@@ -14,15 +13,10 @@ pub fn update_character_movement_system(
     mut active_query: Query<(&Name, &mut MoverComponent), With<CharacterComponent>>,
     mut turn_order: ResMut<TurnOrderResource>,
     player_query: Query<Entity, With<PlayerComponent>>,
-    keys: Res<ButtonInput<KeyCode>>,
     mut logger: ResMut<GameLogResource>,
     map_resource: ResMut<MapResource>,
     mut game_event_queue_resource: ResMut<GameEventQueueResource>,
 ) {
-    // if !keys.just_pressed(AllowCharacterTurn.keycode()) {
-    //     return;
-    // }
-
     match turn_order.get_active_turn_group() {
         Some(g) => {
             if g != TurnGroupEnum::Enemy {
@@ -61,10 +55,18 @@ pub fn update_character_movement_system(
         }
 
         let player_pos;
+        let player_entity;
         match player_query.single() {
-            Ok(e) => player_pos = map_resource.get_position(e).unwrap(),
+            Ok(e) => {
+                player_entity = e;
+                player_pos = map_resource.get_position(e).unwrap()
+            },
             Err(_) => return,
         };
+
+        if (player_pos - active_pos).length() < 1  {
+            game_event_queue_resource.attack_intent(active_entity, player_entity)
+        }
 
         let next_pos;
         match map_resource.get_path(active_pos, player_pos) {
@@ -78,7 +80,7 @@ pub fn update_character_movement_system(
             }
         }
 
-        active_mover.set_target_pos((next_pos.0, next_pos.1));
+        active_mover.set_target_pos(next_pos);
         game_event_queue_resource.move_intent(active_entity);
     }
 }

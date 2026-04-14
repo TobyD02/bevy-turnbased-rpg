@@ -1,6 +1,7 @@
 use std::collections::VecDeque;
 use bevy::prelude::*;
 use crate::enums::game_event_enum::GameEventEnum;
+use crate::resources::map_resource::MapCoord;
 
 #[derive(Resource)]
 pub struct GameEventQueueResource {
@@ -28,7 +29,12 @@ impl GameEventQueueResource {
         self.push(GameEventEnum::GameEventMoveTileIntent {entity});
     }
 
-    pub fn tile_moved(&mut self, from_tile: (i32, i32), col: Color) {
+    pub fn tile_moved(&mut self, from_tile: MapCoord, col: Color) {
         self.push(GameEventEnum::GameEventTileMoved{from_tile, col});
     }
+
+    pub fn attack_intent(&mut self, entity: Entity, target: Entity) {
+        // @todo
+    }
+
 }

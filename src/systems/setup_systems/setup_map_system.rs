@@ -2,7 +2,7 @@ use crate::constants::{MAP_HEIGHT, MAP_WIDTH};
 use crate::entities::wall_entity::WallEntityBundle;
 use crate::enums::tile_sprite_enum::TileSpriteEnum::WallRoundedSolidTop;
 use crate::resources::game_log_resource::GameLogResource;
-use crate::resources::map_resource::MapResource;
+use crate::resources::map_resource::{MapCoord, MapResource};
 use bevy::prelude::*;
 use bevy_prng::WyRand;
 use bevy_rand::global::GlobalRng;
@@ -48,7 +48,7 @@ pub fn setup_map_system(
                 )
                 .id();
 
-            map_resource.set_tile(wall_entity, x, y);
+            map_resource.set_tile(wall_entity, MapCoord{x, y});
         }
     }
 

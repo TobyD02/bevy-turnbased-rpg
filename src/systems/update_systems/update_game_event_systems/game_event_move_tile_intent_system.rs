@@ -65,7 +65,7 @@ pub fn game_event_move_tile_intent_system(
             if p.len() > 2 {
                 return;
             }
-            map_resource.move_tile(*entity, target_pos.0, target_pos.1);
+            map_resource.move_tile(*entity, target_pos);
             mover.increment_turn_movements();
 
             logger.log(format!(
