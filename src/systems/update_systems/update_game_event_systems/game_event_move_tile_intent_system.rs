@@ -65,7 +65,11 @@ pub fn game_event_move_tile_intent_system(
             if p.len() > 2 {
                 return;
             }
-            map_resource.move_tile(*entity, target_pos);
+            let can_move = map_resource.move_tile(*entity, target_pos);
+            if !can_move {
+                logger.log(format!("Cannot move to occupied tile {:?}", target_pos));
+                return
+            }
             mover.increment_turn_movements();
 
             logger.log(format!(
